@@ -46,7 +46,7 @@
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Image = global::H2D_Minesweeper.Properties.Resources.cell;
+            this.pictureBox2.Image = global::H2D_Minesweeper.Properties.Resources.Untitled;
             this.pictureBox2.Location = new System.Drawing.Point(218, 74);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(30, 30);

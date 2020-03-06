@@ -23,9 +23,9 @@ namespace H2D_Minesweeper
             game.NewGame();
         }
 
-        public static void ShowGameOver()
+        private void button2_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Game over!", "Minesweeper", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            game.ShowAll();
         }
     }
 }

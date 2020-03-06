@@ -55,30 +55,58 @@ namespace H2D_Minesweeper
             {
                 return;
             }
+            var label = sender as Label;
+            string[] loc = label.Tag.ToString().Split('-');
+            int X = int.Parse(loc[0]);
+            int Y = int.Parse(loc[1]);
             if (e.Button == MouseButtons.Left)
             {
                 //Mở ô
-                var label = sender as Label;
                 //Nếu mở phải mìn
-                string[] loc = label.Tag.ToString().Split('-');
-                int X = int.Parse(loc[0]);
-                int Y = int.Parse(loc[1]);
                 if (mainBoard[X, Y] == -1)
                 {
+                    label.BackColor = Color.Red;
                     GameOver = true;
                     ShowGameOver();
-                    frmMain.ShowGameOver();
                     return;
+                }
+                //Nếu kích vào ô trắng
+                if (mainBoard[X, Y] == 0)
+                {
+
                 }
                 ShowBlock(label, mainBoard[X, Y]);
             }
             else if (e.Button == MouseButtons.Right)
             {
                 //gắn cờ
+                label.Image = Resources.Untitled;
             }
             else
             {
                 return;
+            }
+            CheckFinish();
+        }
+
+        private void CheckFinish()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    foreach (var item in pnGame.Controls)
+                    {
+                        var label = item as Label;
+                        string[] loc = label.Tag.ToString().Split('-');
+                        int X = int.Parse(loc[0]);
+                        int Y = int.Parse(loc[1]);
+                        if (mainBoard[X, Y] == -1 && label.Image != Resources.Untitled)
+                        {
+                            return;
+                        }
+                    }
+                }
             }
         }
 
@@ -122,6 +150,27 @@ namespace H2D_Minesweeper
                         string[] loc = label.Tag.ToString().Split('-');
                         int X = int.Parse(loc[0]);
                         int Y = int.Parse(loc[1]);
+                        if (mainBoard[X, Y] == -1)
+                        {
+                            ShowBlock(label, mainBoard[X, Y]);
+                        }
+                    }
+                }
+            }
+        }
+
+        public void ShowAll()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    foreach (var item in pnGame.Controls)
+                    {
+                        var label = item as Label;
+                        string[] loc = label.Tag.ToString().Split('-');
+                        int X = int.Parse(loc[0]);
+                        int Y = int.Parse(loc[1]);
                         ShowBlock(label, mainBoard[X, Y]);
                     }
                 }
@@ -138,7 +187,15 @@ namespace H2D_Minesweeper
                 }
             }
             MineNumber = 0;
-            while (MineNumber < 20)
+            mainBoard[0, 0] = -1;
+            MineNumber++;
+            mainBoard[0, 9] = -1;
+            MineNumber++;
+            mainBoard[9, 0] = -1;
+            MineNumber++;
+            mainBoard[9, 9] = -1;
+            MineNumber++;
+            while (MineNumber < 10)
             {
                 int randX = rand.Next(0, 9);
                 int randY = rand.Next(0, 9);
@@ -155,6 +212,7 @@ namespace H2D_Minesweeper
                     //Nếu ô đó có boom
                     if (mainBoard[i, j] == -1)
                     {
+                        //Tất cả vị trí trừ vòng ngoài
                         if (i > 0 && j > 0 && i < 9 && j < 9)
                         {
                             SetNumberNear(i - 1, j - 1);
@@ -166,6 +224,7 @@ namespace H2D_Minesweeper
                             SetNumberNear(i + 1, j + 1);
                             SetNumberNear(i + 1, j);
                         }
+                        //Tất cả vị trí sát mép trên
                         if (i == 0 && j > 0)
                         {
                             if (j < 9)
@@ -173,10 +232,28 @@ namespace H2D_Minesweeper
                                 SetNumberNear(i, j + 1);
                                 SetNumberNear(i + 1, j + 1);
                             }
+                            //Bao gồm góc trên bên phải
                             SetNumberNear(i, j - 1);
                             SetNumberNear(i + 1, j - 1);
                             SetNumberNear(i + 1, j);
                         }
+                        //Tất cả vị trí sát mép dưới
+                        if (i == 9 && j > 0)
+                        {
+                            if (j < 9)
+                            {
+                                SetNumberNear(i - 1, j + 1);
+                                SetNumberNear(i, j + 1);
+                            }
+                            //Bao gồm góc dưới bên phải
+                            SetNumberNear(i - 1, j - 1);
+                            SetNumberNear(i - 1, j);
+                            if (j != 9)
+                            {
+                                SetNumberNear(i, j - 1);
+                            }
+                        }
+                        //Tất cả vị trí sát mép bên trái
                         if (i > 0 && j == 0)
                         {
                             if (i < 9)
@@ -184,21 +261,32 @@ namespace H2D_Minesweeper
                                 SetNumberNear(i + 1, j + 1);
                                 SetNumberNear(i + 1, j);
                             }
+                            //Bao gồm góc dưới bên trái
                             SetNumberNear(i - 1, j);
                             SetNumberNear(i - 1, j + 1);
                             SetNumberNear(i, j + 1);
                         }
+                        //Tất cả vị trí sát mép bên phải trừ góc
+                        if (i > 0 && j == 9)
+                        {
+                            if (i < 9)
+                            {
+                                SetNumberNear(i + 1, j - 1);
+                                SetNumberNear(i + 1, j);
+                            }
+                            if (i != 9)
+                            {
+                                SetNumberNear(i - 1, j - 1);
+                                SetNumberNear(i - 1, j);
+                            }
+                            SetNumberNear(i, j - 1);
+                        }
+                        //Góc trên cùng bên trái
                         if (i == 0 && j == 0)
                         {
                             SetNumberNear(i, j + 1);
                             SetNumberNear(i + 1, j + 1);
                             SetNumberNear(i + 1, j);
-                        }
-                        if (i == 9 && j == 9)
-                        {
-                            SetNumberNear(i - 1, j - 1);
-                            SetNumberNear(i, j - 1);
-                            SetNumberNear(i - 1, j);
                         }
                     }
                 }

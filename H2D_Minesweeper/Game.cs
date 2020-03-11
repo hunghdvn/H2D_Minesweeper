@@ -1,5 +1,6 @@
 ﻿using H2D_Minesweeper.Properties;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -8,22 +9,36 @@ namespace H2D_Minesweeper
     public class Game
     {
         private int[,] mainBoard = new int[10, 10];
+        private int[,] opened = new int[10, 10];
         private Random rand = new Random();
         private Panel pnGame = new Panel();
+        private Button btnNewGame = new Button();
+        private Label lbMine = new Label();
         private int MineNumber = 0;
+        private int MineFlag = 0;
         private bool GameOver;
+        private bool GameWin;
+        private Dictionary<string, Label> dicLabel = new Dictionary<string, Label>();
 
-        public Game(Panel panel)
+        public Game(Panel panel, Button button, Label label)
         {
             pnGame = panel;
+            btnNewGame = button;
+            lbMine = label;
         }
 
         public void NewGame()
         {
+            MineNumber = 0;
+            MineFlag = 0;
+            lbMine.Text = "010";
             GameOver = false;
+            GameWin = false;
             pnGame.Controls.Clear();
+            dicLabel.Clear();
             CreatValueBoard();
             PaintBoardMask();
+            btnNewGame.Image = Resources._new;
         }
         private void PaintBoardMask()
         {
@@ -45,13 +60,14 @@ namespace H2D_Minesweeper
                     label.Tag = i + "-" + j;
                     label.MouseClick += Label_MouseClick;
                     pnGame.Controls.Add(label);
+                    dicLabel.Add(i + "-" + j, label);
                 }
             }
         }
 
         private void Label_MouseClick(object sender, MouseEventArgs e)
         {
-            if (GameOver)
+            if (GameOver || GameWin)
             {
                 return;
             }
@@ -67,71 +83,114 @@ namespace H2D_Minesweeper
                 {
                     label.BackColor = Color.Red;
                     GameOver = true;
+                    btnNewGame.Image = Resources.lose;
                     ShowGameOver();
                     return;
                 }
-                //Nếu kích vào ô trắng
-                if (mainBoard[X, Y] == 0)
-                {
-
-                }
                 ShowBlock(label, mainBoard[X, Y]);
+                opened[X, Y] = 1;
             }
             else if (e.Button == MouseButtons.Right)
             {
                 //gắn cờ
+                if (MineFlag >= MineNumber)
+                {
+                    return;
+                }
                 label.Image = Resources.Untitled;
+                MineFlag++;
+                lbMine.Text = (MineNumber - MineFlag).ToString().PadLeft(3, '0');
             }
             else
             {
                 return;
             }
-            CheckFinish();
+            if (CheckFinish())
+            {
+                GameWin = true;
+                btnNewGame.Image = Resources.win;
+                ShowGameOver();
+            }
         }
 
-        private void CheckFinish()
+        private void ShowEmptyBlock(int x, int y)
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = x - 1; i < x + 2; i++)
             {
-                for (int j = 0; j < 10; j++)
+                for (int j = y - 1; j < y + 2; j++)
                 {
-                    foreach (var item in pnGame.Controls)
+                    if (i >= 0 && i <= 9 && j >= 0 && j <= 9 && mainBoard[i, j] >= 0)
                     {
-                        var label = item as Label;
-                        string[] loc = label.Tag.ToString().Split('-');
-                        int X = int.Parse(loc[0]);
-                        int Y = int.Parse(loc[1]);
-                        if (mainBoard[X, Y] == -1 && label.Image != Resources.Untitled)
+                        if (opened[i, j] == 0)
                         {
-                            return;
+                            if (dicLabel.ContainsKey(i + "-" + j))
+                            {
+                                ShowBlock(dicLabel[i + "-" + j], mainBoard[i, j]);
+                            }
                         }
                     }
                 }
             }
         }
 
-        private static void ShowBlock(Label label, int v)
+        private bool CheckFinish()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    if (!dicLabel.ContainsKey(i + "-" + j))
+                    {
+                        continue;
+                    }
+                    var label = dicLabel[i + "-" + j];
+                    if (label != null)
+                    {
+                        string[] loc = label.Tag.ToString().Split('-');
+                        int X = int.Parse(loc[0]);
+                        int Y = int.Parse(loc[1]);
+                        if (mainBoard[X, Y] != -1 && opened[X, Y] == 0)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
+        private void ShowBlock(Label label, int v)
         {
             label.Image = null;
             label.Text = v == 0 ? "" : v.ToString();
-            switch (label.Text)
+            string[] loc = label.Tag.ToString().Split('-');
+            int X = int.Parse(loc[0]);
+            int Y = int.Parse(loc[1]);
+            opened[X, Y] = 1;
+            switch (v)
             {
-                case "1":
+                case 0:
+                    ShowEmptyBlock(X, Y);
+                    break;
+                case 1:
                     label.ForeColor = Color.Blue;
                     break;
-                case "2":
+                case 2:
                     label.ForeColor = Color.DarkGreen;
                     break;
-                case "3":
+                case 3:
                     label.ForeColor = Color.Red;
                     break;
-                case "4":
+                case 4:
                     label.ForeColor = Color.DarkBlue;
                     break;
-                case "5":
+                case 5:
                     label.ForeColor = Color.DarkRed;
                     break;
-                case "-1":
+                case 6:
+                    label.ForeColor = Color.BlueViolet;
+                    break;
+                case -1:
                     label.Text = "";
                     label.Image = Resources.clanbomber;
                     break;
@@ -144,9 +203,13 @@ namespace H2D_Minesweeper
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    foreach (var item in pnGame.Controls)
+                    if (!dicLabel.ContainsKey(i + "-" + j))
                     {
-                        var label = item as Label;
+                        continue;
+                    }
+                    var label = dicLabel[i + "-" + j];
+                    if (label != null)
+                    {
                         string[] loc = label.Tag.ToString().Split('-');
                         int X = int.Parse(loc[0]);
                         int Y = int.Parse(loc[1]);
@@ -159,24 +222,6 @@ namespace H2D_Minesweeper
             }
         }
 
-        public void ShowAll()
-        {
-            for (int i = 0; i < 10; i++)
-            {
-                for (int j = 0; j < 10; j++)
-                {
-                    foreach (var item in pnGame.Controls)
-                    {
-                        var label = item as Label;
-                        string[] loc = label.Tag.ToString().Split('-');
-                        int X = int.Parse(loc[0]);
-                        int Y = int.Parse(loc[1]);
-                        ShowBlock(label, mainBoard[X, Y]);
-                    }
-                }
-            }
-        }
-
         private void CreatValueBoard()
         {
             for (int i = 0; i < 10; i++)
@@ -184,17 +229,9 @@ namespace H2D_Minesweeper
                 for (int j = 0; j < 10; j++)
                 {
                     mainBoard[i, j] = 0;
+                    opened[i, j] = 0;
                 }
             }
-            MineNumber = 0;
-            mainBoard[0, 0] = -1;
-            MineNumber++;
-            mainBoard[0, 9] = -1;
-            MineNumber++;
-            mainBoard[9, 0] = -1;
-            MineNumber++;
-            mainBoard[9, 9] = -1;
-            MineNumber++;
             while (MineNumber < 10)
             {
                 int randX = rand.Next(0, 9);

@@ -10,7 +10,7 @@ namespace H2D_Minesweeper
         public frmMain()
         {
             InitializeComponent();
-            game = new Game(pnGame);
+            game = new Game(pnGame, btnNewGame, lbMine);
         }
 
         private void frmMain_Load(object sender, EventArgs e)
@@ -18,14 +18,31 @@ namespace H2D_Minesweeper
             game.NewGame();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void mnuNewGane_Click(object sender, EventArgs e)
         {
             game.NewGame();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void mnuExit_Click(object sender, EventArgs e)
         {
-            game.ShowAll();
+            Application.Exit();
+        }
+
+        private void btnNewGame_Click(object sender, EventArgs e)
+        {
+            game.NewGame();
+        }
+
+        private void mnuViewHelp_Click(object sender, EventArgs e)
+        {
+            var help = new frmHelp();
+            help.ShowDialog();
+        }
+
+        private void mnuAbout_Click(object sender, EventArgs e)
+        {
+            var about = new frmAbout();
+            about.ShowDialog();
         }
     }
 }

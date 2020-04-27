@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace H2D_Minesweeper
@@ -43,6 +44,66 @@ namespace H2D_Minesweeper
         {
             var about = new frmAbout();
             about.ShowDialog();
+        }
+
+        private void mnuLevelEasy_Click(object sender, EventArgs e)
+        {
+            Width = 285;
+            Height = 390;
+            CenterToScreen();
+            pnGame.Width = 240;
+            pnGame.Height = 240;
+            game = new Game(pnGame, btnNewGame, lbMine);
+            game.NewGame();
+        }
+
+        private void mnuLevelNormal_Click(object sender, EventArgs e)
+        {
+            Width = 405;
+            Height = 510;
+            CenterToScreen();
+            pnGame.Width = 360;
+            pnGame.Height = 360;
+            game = new Game(pnGame, btnNewGame, lbMine, 12, 12, 20);
+            game.NewGame();
+        }
+
+        private void frmMain_Resize(object sender, EventArgs e)
+        {
+            btnNewGame.Location = new Point(Width / 2 - 16, 40);
+        }
+
+        private void mnuLevelHard_Click(object sender, EventArgs e)
+        {
+            Width = 495;
+            Height = 600;
+            CenterToScreen();
+            pnGame.Width = 450;
+            pnGame.Height = 450;
+            game = new Game(pnGame, btnNewGame, lbMine, 15, 15, 30);
+            game.NewGame();
+        }
+
+        private void mnuLevelVeryHard_Click(object sender, EventArgs e)
+        {
+            Width = 585;
+            Height = 690;
+            CenterToScreen();
+            pnGame.Width = 540;
+            pnGame.Height = 540;
+            game = new Game(pnGame, btnNewGame, lbMine, 18, 18, 40);
+            game.NewGame();
+        }
+
+        private void mnuLevelExtremeHard_Click(object sender, EventArgs e)
+        {
+            Width = 585;
+            Height = 690;
+            CenterToScreen();
+            pnGame.Width = 540;
+            pnGame.Height = 540;
+            game = new Game(pnGame, btnNewGame, lbMine, 18, 18, 60);
+            game.NewGame();
         }
     }
 }

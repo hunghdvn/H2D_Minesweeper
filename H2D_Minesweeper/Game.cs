@@ -8,30 +8,35 @@ namespace H2D_Minesweeper
 {
     public class Game
     {
-        private int[,] mainBoard = new int[10, 10];
-        private int[,] opened = new int[10, 10];
+        private static int NumCol = 8;
+        private static int NumRow = 8;
+
+        private CellBlock[,] mainBoard = new CellBlock[8, 8];
         private Random rand = new Random();
         private Panel pnGame = new Panel();
         private Button btnNewGame = new Button();
         private Label lbMine = new Label();
-        private int MineNumber = 0;
+        private static int MineNumber = 0;
         private int MineFlag = 0;
         private bool GameOver;
         private bool GameWin;
         private Dictionary<string, Label> dicLabel = new Dictionary<string, Label>();
 
-        public Game(Panel panel, Button button, Label label)
+        public Game(Panel panel, Button button, Label label, int numCol = 8, int numRow = 8, int numMine = 10)
         {
             pnGame = panel;
             btnNewGame = button;
             lbMine = label;
+            NumCol = numCol;
+            NumRow = numRow;
+            MineNumber = numMine;
+            mainBoard = new CellBlock[numCol, numRow];
         }
 
         public void NewGame()
         {
-            MineNumber = 0;
             MineFlag = 0;
-            lbMine.Text = "010";
+            lbMine.Text = MineNumber.ToString();
             GameOver = false;
             GameWin = false;
             pnGame.Controls.Clear();
@@ -42,9 +47,9 @@ namespace H2D_Minesweeper
         }
         private void PaintBoardMask()
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < NumCol; i++)
             {
-                for (int j = 0; j < 10; j++)
+                for (int j = 0; j < NumRow; j++)
                 {
                     var point = new Point(i * 30, j * 30);
                     var font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
@@ -79,7 +84,7 @@ namespace H2D_Minesweeper
             {
                 //Mở ô
                 //Nếu mở phải mìn
-                if (mainBoard[X, Y] == -1)
+                if (mainBoard[X, Y].NumMine == -1)
                 {
                     label.BackColor = Color.Red;
                     GameOver = true;
@@ -88,7 +93,7 @@ namespace H2D_Minesweeper
                     return;
                 }
                 ShowBlock(label, mainBoard[X, Y]);
-                opened[X, Y] = 1;
+                mainBoard[X, Y].BlockType = BlockType.Open;
             }
             else if (e.Button == MouseButtons.Right)
             {
@@ -97,8 +102,19 @@ namespace H2D_Minesweeper
                 {
                     return;
                 }
-                label.Image = Resources.Untitled;
-                MineFlag++;
+                //Nếu đã gắn cờ rồi
+                if (mainBoard[X, Y].BlockType == BlockType.Flag)
+                {
+                    mainBoard[X, Y].BlockType = BlockType.None;
+                    label.Image = Resources.cell;
+                    MineFlag--;
+                }
+                else if (mainBoard[X, Y].BlockType == BlockType.None)
+                {
+                    mainBoard[X, Y].BlockType = BlockType.Flag;
+                    label.Image = Resources.Untitled;
+                    MineFlag++;
+                }
                 lbMine.Text = (MineNumber - MineFlag).ToString().PadLeft(3, '0');
             }
             else
@@ -119,9 +135,9 @@ namespace H2D_Minesweeper
             {
                 for (int j = y - 1; j < y + 2; j++)
                 {
-                    if (i >= 0 && i <= 9 && j >= 0 && j <= 9 && mainBoard[i, j] >= 0)
+                    if (i >= 0 && i <= NumCol - 1 && j >= 0 && j <= NumRow - 1 && mainBoard[i, j].NumMine >= 0)
                     {
-                        if (opened[i, j] == 0)
+                        if (mainBoard[i, j].BlockType == BlockType.None)
                         {
                             if (dicLabel.ContainsKey(i + "-" + j))
                             {
@@ -135,9 +151,9 @@ namespace H2D_Minesweeper
 
         private bool CheckFinish()
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < NumCol; i++)
             {
-                for (int j = 0; j < 10; j++)
+                for (int j = 0; j < NumRow; j++)
                 {
                     if (!dicLabel.ContainsKey(i + "-" + j))
                     {
@@ -149,7 +165,7 @@ namespace H2D_Minesweeper
                         string[] loc = label.Tag.ToString().Split('-');
                         int X = int.Parse(loc[0]);
                         int Y = int.Parse(loc[1]);
-                        if (mainBoard[X, Y] != -1 && opened[X, Y] == 0)
+                        if (mainBoard[X, Y].NumMine != -1 && mainBoard[X, Y].BlockType == BlockType.None)
                         {
                             return false;
                         }
@@ -159,15 +175,15 @@ namespace H2D_Minesweeper
             return true;
         }
 
-        private void ShowBlock(Label label, int v)
+        private void ShowBlock(Label label, CellBlock cellBlock)
         {
             label.Image = null;
-            label.Text = v == 0 ? "" : v.ToString();
+            label.Text = cellBlock.NumMine == 0 ? "" : cellBlock.NumMine.ToString();
             string[] loc = label.Tag.ToString().Split('-');
             int X = int.Parse(loc[0]);
             int Y = int.Parse(loc[1]);
-            opened[X, Y] = 1;
-            switch (v)
+            cellBlock.BlockType = BlockType.Open;
+            switch (cellBlock.NumMine)
             {
                 case 0:
                     ShowEmptyBlock(X, Y);
@@ -199,9 +215,9 @@ namespace H2D_Minesweeper
 
         public void ShowGameOver()
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < NumCol; i++)
             {
-                for (int j = 0; j < 10; j++)
+                for (int j = 0; j < NumRow; j++)
                 {
                     if (!dicLabel.ContainsKey(i + "-" + j))
                     {
@@ -213,7 +229,7 @@ namespace H2D_Minesweeper
                         string[] loc = label.Tag.ToString().Split('-');
                         int X = int.Parse(loc[0]);
                         int Y = int.Parse(loc[1]);
-                        if (mainBoard[X, Y] == -1)
+                        if (mainBoard[X, Y].NumMine == -1)
                         {
                             ShowBlock(label, mainBoard[X, Y]);
                         }
@@ -224,33 +240,33 @@ namespace H2D_Minesweeper
 
         private void CreatValueBoard()
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < NumCol; i++)
             {
-                for (int j = 0; j < 10; j++)
+                for (int j = 0; j < NumRow; j++)
                 {
-                    mainBoard[i, j] = 0;
-                    opened[i, j] = 0;
+                    mainBoard[i, j] = new CellBlock { NumMine = 0, BlockType = BlockType.None };
                 }
             }
-            while (MineNumber < 10)
+            int numMine = 0;
+            while (numMine < MineNumber)
             {
-                int randX = rand.Next(0, 9);
-                int randY = rand.Next(0, 9);
-                if (mainBoard[randX, randY] != -1)
+                int randX = rand.Next(0, NumCol - 1);
+                int randY = rand.Next(0, NumRow - 1);
+                if (mainBoard[randX, randY].NumMine != -1)
                 {
-                    mainBoard[randX, randY] = -1;
-                    MineNumber++;
+                    mainBoard[randX, randY].NumMine = -1;
+                    numMine++;
                 }
             }
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < NumCol; i++)
             {
-                for (int j = 0; j < 10; j++)
+                for (int j = 0; j < NumRow; j++)
                 {
                     //Nếu ô đó có boom
-                    if (mainBoard[i, j] == -1)
+                    if (mainBoard[i, j].NumMine == -1)
                     {
                         //Tất cả vị trí trừ vòng ngoài
-                        if (i > 0 && j > 0 && i < 9 && j < 9)
+                        if (i > 0 && j > 0 && i < NumCol - 1 && j < NumRow - 1)
                         {
                             SetNumberNear(i - 1, j - 1);
                             SetNumberNear(i, j - 1);
@@ -264,7 +280,7 @@ namespace H2D_Minesweeper
                         //Tất cả vị trí sát mép trên
                         if (i == 0 && j > 0)
                         {
-                            if (j < 9)
+                            if (j < NumRow - 1)
                             {
                                 SetNumberNear(i, j + 1);
                                 SetNumberNear(i + 1, j + 1);
@@ -275,9 +291,9 @@ namespace H2D_Minesweeper
                             SetNumberNear(i + 1, j);
                         }
                         //Tất cả vị trí sát mép dưới
-                        if (i == 9 && j > 0)
+                        if (i == NumCol - 1 && j > 0)
                         {
-                            if (j < 9)
+                            if (j < NumRow - 1)
                             {
                                 SetNumberNear(i - 1, j + 1);
                                 SetNumberNear(i, j + 1);
@@ -285,7 +301,7 @@ namespace H2D_Minesweeper
                             //Bao gồm góc dưới bên phải
                             SetNumberNear(i - 1, j - 1);
                             SetNumberNear(i - 1, j);
-                            if (j != 9)
+                            if (j != NumRow - 1)
                             {
                                 SetNumberNear(i, j - 1);
                             }
@@ -293,7 +309,7 @@ namespace H2D_Minesweeper
                         //Tất cả vị trí sát mép bên trái
                         if (i > 0 && j == 0)
                         {
-                            if (i < 9)
+                            if (i < NumCol - 1)
                             {
                                 SetNumberNear(i + 1, j + 1);
                                 SetNumberNear(i + 1, j);
@@ -304,14 +320,14 @@ namespace H2D_Minesweeper
                             SetNumberNear(i, j + 1);
                         }
                         //Tất cả vị trí sát mép bên phải trừ góc
-                        if (i > 0 && j == 9)
+                        if (i > 0 && j == NumRow - 1)
                         {
-                            if (i < 9)
+                            if (i < NumCol - 1)
                             {
                                 SetNumberNear(i + 1, j - 1);
                                 SetNumberNear(i + 1, j);
                             }
-                            if (i != 9)
+                            if (i != NumCol - 1)
                             {
                                 SetNumberNear(i - 1, j - 1);
                                 SetNumberNear(i - 1, j);
@@ -332,8 +348,8 @@ namespace H2D_Minesweeper
 
         private void SetNumberNear(int i, int j)
         {
-            if (mainBoard[i, j] != -1)
-                mainBoard[i, j]++;
+            if (mainBoard[i, j].NumMine != -1)
+                mainBoard[i, j].NumMine++;
         }
     }
 }

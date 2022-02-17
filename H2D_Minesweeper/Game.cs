@@ -265,82 +265,14 @@ namespace H2D_Minesweeper
                     //Nếu ô đó có boom
                     if (mainBoard[i, j].NumMine == -1)
                     {
-                        //Tất cả vị trí trừ vòng ngoài
-                        if (i > 0 && j > 0 && i < NumCol - 1 && j < NumRow - 1)
-                        {
-                            SetNumberNear(i - 1, j - 1);
-                            SetNumberNear(i, j - 1);
-                            SetNumberNear(i + 1, j - 1);
-                            SetNumberNear(i - 1, j);
-                            SetNumberNear(i - 1, j + 1);
-                            SetNumberNear(i, j + 1);
-                            SetNumberNear(i + 1, j + 1);
-                            SetNumberNear(i + 1, j);
-                        }
-                        //Tất cả vị trí sát mép trên
-                        if (i == 0 && j > 0)
-                        {
-                            if (j < NumRow - 1)
-                            {
-                                SetNumberNear(i, j + 1);
-                                SetNumberNear(i + 1, j + 1);
-                            }
-                            //Bao gồm góc trên bên phải
-                            SetNumberNear(i, j - 1);
-                            SetNumberNear(i + 1, j - 1);
-                            SetNumberNear(i + 1, j);
-                        }
-                        //Tất cả vị trí sát mép dưới
-                        if (i == NumCol - 1 && j > 0)
-                        {
-                            if (j < NumRow - 1)
-                            {
-                                SetNumberNear(i - 1, j + 1);
-                                SetNumberNear(i, j + 1);
-                            }
-                            //Bao gồm góc dưới bên phải
-                            SetNumberNear(i - 1, j - 1);
-                            SetNumberNear(i - 1, j);
-                            if (j != NumRow - 1)
-                            {
-                                SetNumberNear(i, j - 1);
-                            }
-                        }
-                        //Tất cả vị trí sát mép bên trái
-                        if (i > 0 && j == 0)
-                        {
-                            if (i < NumCol - 1)
-                            {
-                                SetNumberNear(i + 1, j + 1);
-                                SetNumberNear(i + 1, j);
-                            }
-                            //Bao gồm góc dưới bên trái
-                            SetNumberNear(i - 1, j);
-                            SetNumberNear(i - 1, j + 1);
-                            SetNumberNear(i, j + 1);
-                        }
-                        //Tất cả vị trí sát mép bên phải trừ góc
-                        if (i > 0 && j == NumRow - 1)
-                        {
-                            if (i < NumCol - 1)
-                            {
-                                SetNumberNear(i + 1, j - 1);
-                                SetNumberNear(i + 1, j);
-                            }
-                            if (i != NumCol - 1)
-                            {
-                                SetNumberNear(i - 1, j - 1);
-                                SetNumberNear(i - 1, j);
-                            }
-                            SetNumberNear(i, j - 1);
-                        }
-                        //Góc trên cùng bên trái
-                        if (i == 0 && j == 0)
-                        {
-                            SetNumberNear(i, j + 1);
-                            SetNumberNear(i + 1, j + 1);
-                            SetNumberNear(i + 1, j);
-                        }
+                        SetNumberNear(i - 1, j - 1);
+                        SetNumberNear(i, j - 1);
+                        SetNumberNear(i + 1, j - 1);
+                        SetNumberNear(i - 1, j);
+                        SetNumberNear(i - 1, j + 1);
+                        SetNumberNear(i, j + 1);
+                        SetNumberNear(i + 1, j + 1);
+                        SetNumberNear(i + 1, j);
                     }
                 }
             }
@@ -348,6 +280,8 @@ namespace H2D_Minesweeper
 
         private void SetNumberNear(int i, int j)
         {
+            if (i < 0 || j < 0 || i > NumCol || j > NumRow)
+                return;
             if (mainBoard[i, j].NumMine != -1)
                 mainBoard[i, j].NumMine++;
         }

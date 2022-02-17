@@ -32,19 +32,19 @@
             this.pnGame = new System.Windows.Forms.Panel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuNewGane = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuExit = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuViewHelp = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuAbout = new System.Windows.Forms.ToolStripMenuItem();
-            this.lbMine = new System.Windows.Forms.Label();
-            this.btnNewGame = new System.Windows.Forms.Button();
+            this.mnuNewGame = new System.Windows.Forms.ToolStripMenuItem();
             this.levelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuLevelEasy = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuLevelNormal = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuLevelHard = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuLevelVeryHard = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuLevelExtremeHard = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuViewHelp = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuAbout = new System.Windows.Forms.ToolStripMenuItem();
+            this.lbMine = new System.Windows.Forms.Label();
+            this.btnNewGame = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -69,20 +69,67 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuNewGane,
+            this.mnuNewGame,
             this.levelToolStripMenuItem,
             this.mnuExit});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "&File";
             // 
-            // mnuNewGane
+            // mnuNewGame
             // 
-            this.mnuNewGane.Name = "mnuNewGane";
-            this.mnuNewGane.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            this.mnuNewGane.Size = new System.Drawing.Size(180, 22);
-            this.mnuNewGane.Text = "&New game";
-            this.mnuNewGane.Click += new System.EventHandler(this.mnuNewGane_Click);
+            this.mnuNewGame.Name = "mnuNewGame";
+            this.mnuNewGame.ShortcutKeys = System.Windows.Forms.Keys.F2;
+            this.mnuNewGame.Size = new System.Drawing.Size(180, 22);
+            this.mnuNewGame.Text = "&New game";
+            this.mnuNewGame.Click += new System.EventHandler(this.mnuNewGame_Click);
+            // 
+            // levelToolStripMenuItem
+            // 
+            this.levelToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuLevelEasy,
+            this.mnuLevelNormal,
+            this.mnuLevelHard,
+            this.mnuLevelVeryHard,
+            this.mnuLevelExtremeHard});
+            this.levelToolStripMenuItem.Name = "levelToolStripMenuItem";
+            this.levelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.levelToolStripMenuItem.Text = "&Level";
+            // 
+            // mnuLevelEasy
+            // 
+            this.mnuLevelEasy.Name = "mnuLevelEasy";
+            this.mnuLevelEasy.Size = new System.Drawing.Size(144, 22);
+            this.mnuLevelEasy.Text = "Easy";
+            this.mnuLevelEasy.Click += new System.EventHandler(this.mnuLevelEasy_Click);
+            // 
+            // mnuLevelNormal
+            // 
+            this.mnuLevelNormal.Name = "mnuLevelNormal";
+            this.mnuLevelNormal.Size = new System.Drawing.Size(144, 22);
+            this.mnuLevelNormal.Text = "Normal";
+            this.mnuLevelNormal.Click += new System.EventHandler(this.mnuLevelNormal_Click);
+            // 
+            // mnuLevelHard
+            // 
+            this.mnuLevelHard.Name = "mnuLevelHard";
+            this.mnuLevelHard.Size = new System.Drawing.Size(144, 22);
+            this.mnuLevelHard.Text = "Hard";
+            this.mnuLevelHard.Click += new System.EventHandler(this.mnuLevelHard_Click);
+            // 
+            // mnuLevelVeryHard
+            // 
+            this.mnuLevelVeryHard.Name = "mnuLevelVeryHard";
+            this.mnuLevelVeryHard.Size = new System.Drawing.Size(144, 22);
+            this.mnuLevelVeryHard.Text = "Very hard";
+            this.mnuLevelVeryHard.Click += new System.EventHandler(this.mnuLevelVeryHard_Click);
+            // 
+            // mnuLevelExtremeHard
+            // 
+            this.mnuLevelExtremeHard.Name = "mnuLevelExtremeHard";
+            this.mnuLevelExtremeHard.Size = new System.Drawing.Size(144, 22);
+            this.mnuLevelExtremeHard.Text = "Extreme hard";
+            this.mnuLevelExtremeHard.Click += new System.EventHandler(this.mnuLevelExtremeHard_Click);
             // 
             // mnuExit
             // 
@@ -142,53 +189,6 @@
             this.btnNewGame.UseVisualStyleBackColor = true;
             this.btnNewGame.Click += new System.EventHandler(this.btnNewGame_Click);
             // 
-            // levelToolStripMenuItem
-            // 
-            this.levelToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuLevelEasy,
-            this.mnuLevelNormal,
-            this.mnuLevelHard,
-            this.mnuLevelVeryHard,
-            this.mnuLevelExtremeHard});
-            this.levelToolStripMenuItem.Name = "levelToolStripMenuItem";
-            this.levelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.levelToolStripMenuItem.Text = "&Level";
-            // 
-            // mnuLevelEasy
-            // 
-            this.mnuLevelEasy.Name = "mnuLevelEasy";
-            this.mnuLevelEasy.Size = new System.Drawing.Size(180, 22);
-            this.mnuLevelEasy.Text = "Easy";
-            this.mnuLevelEasy.Click += new System.EventHandler(this.mnuLevelEasy_Click);
-            // 
-            // mnuLevelNormal
-            // 
-            this.mnuLevelNormal.Name = "mnuLevelNormal";
-            this.mnuLevelNormal.Size = new System.Drawing.Size(180, 22);
-            this.mnuLevelNormal.Text = "Normal";
-            this.mnuLevelNormal.Click += new System.EventHandler(this.mnuLevelNormal_Click);
-            // 
-            // mnuLevelHard
-            // 
-            this.mnuLevelHard.Name = "mnuLevelHard";
-            this.mnuLevelHard.Size = new System.Drawing.Size(180, 22);
-            this.mnuLevelHard.Text = "Hard";
-            this.mnuLevelHard.Click += new System.EventHandler(this.mnuLevelHard_Click);
-            // 
-            // mnuLevelVeryHard
-            // 
-            this.mnuLevelVeryHard.Name = "mnuLevelVeryHard";
-            this.mnuLevelVeryHard.Size = new System.Drawing.Size(180, 22);
-            this.mnuLevelVeryHard.Text = "Very hard";
-            this.mnuLevelVeryHard.Click += new System.EventHandler(this.mnuLevelVeryHard_Click);
-            // 
-            // mnuLevelExtremeHard
-            // 
-            this.mnuLevelExtremeHard.Name = "mnuLevelExtremeHard";
-            this.mnuLevelExtremeHard.Size = new System.Drawing.Size(180, 22);
-            this.mnuLevelExtremeHard.Text = "Extreme hard";
-            this.mnuLevelExtremeHard.Click += new System.EventHandler(this.mnuLevelExtremeHard_Click);
-            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -221,7 +221,7 @@
         private System.Windows.Forms.Panel pnGame;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem mnuNewGane;
+        private System.Windows.Forms.ToolStripMenuItem mnuNewGame;
         private System.Windows.Forms.ToolStripMenuItem mnuExit;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mnuViewHelp;

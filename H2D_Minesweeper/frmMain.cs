@@ -19,7 +19,7 @@ namespace H2D_Minesweeper
             game.NewGame();
         }
 
-        private void mnuNewGane_Click(object sender, EventArgs e)
+        private void mnuNewGame_Click(object sender, EventArgs e)
         {
             game.NewGame();
         }
